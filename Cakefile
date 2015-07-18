@@ -11,7 +11,7 @@ task 'build-min', 'Build minified crowdcontrol.min.js', ->
   exec 'node_modules/.bin/requisite src/index.coffee -m -o crowdcontrol.min.js'
 
 task 'example', 'Launch Examples', ->
-  exec 'coffee examples/server.coffee'
+  exec 'coffee examples/index.coffee'
   exec 'cake watch'
 
 task 'test', 'Run tests', ->
@@ -27,3 +27,17 @@ task 'test', 'Run tests', ->
     --require test/_helper.js
     .test'
     ]
+
+task 'install-selenium', 'installs chromedriver for selenium', ->
+  selenium.install(
+    version: '2.46.0'
+    baseURL: 'http://selenium-release.storage.googleapis.com'
+    drivers:
+      chrome:
+        version: '2.9'
+        arch: process.arch
+        baseURL: 'http://chromedriver.storage.googleapis.com'
+    logger: console.log
+    , (err) -> throw err if err?
+  )
+
