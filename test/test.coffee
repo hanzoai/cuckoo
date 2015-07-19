@@ -22,7 +22,7 @@ getBrowser = ->
         ]
         'tunnel-identifier': process.env.TRAVIS_JOB_NUMBER
       host: 'ondemand.saucelabs.com'
-      port: process.env.PORT ? 3333
+      port: 80
       user: process.env.SAUCE_USERNAME
       key: process.env.SAUCE_ACCESS_KEY
       logLevel: 'silent'
