@@ -1,7 +1,6 @@
-webdriver = require('webdriverio')
-assert = require('assert')
+assert = require 'assert'
 should = require('chai').should()
-async = require 'async'
+webdriver = require 'webdriverio'
 
 getBrowser = ->
   browserName = process.env.BROWSER

@@ -23,6 +23,8 @@ task 'test', 'Run tests', ->
 
   selenium = require 'selenium-standalone'
   selenium.start (err, child) ->
+    throw err if err?
+
     exec 'NODE_ENV=test
           BROWSER=phantomjs
           node_modules/.bin/mocha
@@ -30,15 +32,19 @@ task 'test', 'Run tests', ->
           --reporter spec
           --colors
           --timeout 60000
-          test/test.coffee', child.kill
+          test/test.coffee', -> child.kill() and process.exit 0
 
 task 'test-ci', 'Run tests on CI server', ->
   invoke 'static-server'
 
-  exec 'NODE_ENV=test
-        node_modules/.bin/mocha
-        --compilers coffee:coffee-script/register
-        --reporter spec
-        --colors
-        --timeout 60000
-        test/test.coffee'
+  tests = for name in ['chrome', 'firefox']
+    "NODE_ENV=test
+     BROWSER=#{name}
+     node_modules/.bin/mocha
+     --compilers coffee:coffee-script/register
+     --reporter spec
+     --colors
+     --timeout 60000
+     test/test.coffee"
+
+  exec tests, -> process.exit 0
