@@ -1,5 +1,7 @@
 exec = require('shortcake').exec
 
+option '-b', '--browser [browserName]', 'browser to test with'
+
 task 'build', 'Build module and bundled crowdcontrol.js', ->
   exec 'node_modules/.bin/requisite src/index.coffee -o cuckoo.js'
 
@@ -18,21 +20,23 @@ task 'static-server', 'Run static server for tests', ->
 task 'selenium-install', 'Install selenium standalone', ->
   exec 'node_modules/.bin/selenium-standalone install'
 
-task 'test', 'Run tests', ->
+task 'test', 'Run tests', (options) ->
+  browserName = options.browser ? 'phantomjs'
+
   invoke 'static-server'
 
   selenium = require 'selenium-standalone'
   selenium.start (err, child) ->
     throw err if err?
 
-    exec 'NODE_ENV=test
-          BROWSER=phantomjs
+    exec "NODE_ENV=test
+          BROWSER=#{browserName}
           node_modules/.bin/mocha
           --compilers coffee:coffee-script/register
           --reporter spec
           --colors
           --timeout 60000
-          test/test.coffee', (err) ->
+          test/test.coffee", (err) ->
       child.kill()
       process.exit 1 if err?
       process.exit 0
@@ -40,9 +44,15 @@ task 'test', 'Run tests', ->
 task 'test-ci', 'Run tests on CI server', ->
   invoke 'static-server'
 
-  tests = for name in ['chrome', 'firefox']
+  browsers = require './test/ci-config'
+
+  tests = for {browserName, platform, version, deviceName, deviceOrientation} in browsers
     "NODE_ENV=test
-     BROWSER=#{name}
+     BROWSER=\"#{browserName}\"
+     PLATFORM=\"#{platform}\"
+     VERSION=\"#{version}\"
+     DEVICE_NAME=\"#{deviceName ? ''}\"
+     DEVICE_ORIENTATION=\"#{deviceOrientation ? ''}\"
      node_modules/.bin/mocha
      --compilers coffee:coffee-script/register
      --reporter spec
