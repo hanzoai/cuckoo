@@ -41,21 +41,46 @@ run = (seleniumParams) ->
       done()
 
   describe 'Cuckoo Tests for ['+ seleniumParams.desiredCapabilities.browserName + ']', () ->
-    describe 'Globally Target Events', ->
-      it 'Capture Global Clicks', (done) ->
-        client.url("http://localhost:#{port}/test.html", ->
-        ).click('#somelink', ->
-        ).getText('#result', (err, res) ->
-          res.should.equal 'clicked: somelink'
-        ).call done
+    describe 'Cuckoo can capture uncaptured events', ->
+      it 'should capture a click on an element without a handler', (done) ->
+        client.url("http://localhost:#{port}/test.html")
+          .click('#somelink')
+          .getText('#result', (err, res) ->
+            res.should.equal 'clicked: somelink'
+          ).call done
+      it 'should capture window events like hashchange', (done) ->
+        client.url("http://localhost:#{port}/test.html")
+          .click('#linktobookmark')
+          .getText('#result', (err, res) ->
+            res.should.equal 'hashchangeed: undefined'
+          ).call done
+      it 'should filter events', (done) ->
+        client.url("http://localhost:#{port}/test.html")
+          .setValue('#changeinput', "somethingelse")
+          .getValue('#changeinput', (err, res)->
+            res.should.equal('somethingelse')
+          )
+          .getText('#rejected', (err, res) ->
+            res.should.equal 'changeed: changeinput'
+          )
+          .getText('#result', (err, res) ->
+            res.should.equal ''
+          ).call done
 
-    describe 'Globally Target Events', ->
-      it 'Capture Global Clicks', (done) ->
-        client.url("http://localhost:#{port}/test.html", ->
-        ).click('#somelink', ->
-        ).getText('#result', (err, res) ->
-          res.should.equal 'clicked: somelink'
-        ).call done
+    describe 'Cuckoo can capture captured events', ->
+      it 'should capture propagated events', (done) ->
+        client.url("http://localhost:#{port}/test.html")
+          .click('#clickablediv')
+          .getText('#result', (err, res) ->
+            res.should.equal 'clicked: clickablediv'
+          ).call done
+
+      it 'should capture unpropagated events', (done) ->
+        client.url("http://localhost:#{port}/test.html")
+          .click('#dontstopmenow')
+          .getText('#result', (err, res) ->
+            res.should.equal 'clicked: dontstopmenow'
+          ).call done
 
 if Boolean(process.env.CI) and Boolean(process.env.TRAVIS)
   browsers = [

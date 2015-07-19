@@ -12,16 +12,40 @@
     <script src="cuckoo.js"></script>
   </head>
   <body>
-    <a id="somelink" href="#somelink">some link</a>
-    <div id="clickablediv">clickable div</a>
+    <div id="somelink">some link</div>
+    <a id="linktobookmark" href="#bookmark">link to bookmark</a>
+    <div id="bookmark">
+    </div>
+    <div id="clickablediv">clickable div</div>
+    <div id="dontstopmenow">Don't Stop Me Now</div>
+    <input id="changeinput" value="blah"></input>
     <p id="result"></p>
+    <p id="rejected"></p>
     <script>
+      $('#clickablediv').on('click', function(event){})
 
+      $('#dontstopmenow').on('click', function(event){
+        event.stopPropagation()
+        event.stopImmediatePropagation()
+        event.preventDefault()
+        return false
+      })
 
       cuckoo.Egg = function(event) {
-        document.getElementById('result').innerHTML = "clicked: " + event.target.id
+        type = event.type
+
+        if (
+          type !== 'click' &&
+          type !== 'submit' &&
+          type !== 'hashchange'
+        ) {
+          document.getElementById('rejected').innerHTML = event.type + 'ed: ' + event.target.id
+          return
+        }
+
+        document.getElementById('result').innerHTML = event.type + 'ed: ' + event.target.id
       }
-      cuckoo.Target('click')
+      cuckoo.Target('change click hashchange')
     </script>
   </body>
 </html>

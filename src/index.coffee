@@ -60,8 +60,12 @@ do ->
 
       removeEventListener type, nest, useCapture
 
-  exports.Target = (events)->
-    document.body.addEventListener(events, exports.Egg)
+  exports.Target = (types)->
+    events = types.split(' ')
+    for event in events
+      window.addEventListener(event, ()->
+        exports.Egg.apply exports.Egg, arguments
+      )
 
   window.cuckoo = exports if window?
 
