@@ -7,7 +7,7 @@ script: >
   ./node_modules/.bin/mocha --reporter spec \
                               --compilers coffee:coffee-script/register \
                               --require postmortem/register \
-                              test/test.coffee'
+                              test/test.coffee
 
 cache:
   directories:
