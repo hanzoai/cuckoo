@@ -2,64 +2,67 @@ exports =
   Egg: ()->
     console.log('Egg called with ', arguments)
 
-if EventTarget?
-  proto = EventTarget.prototype
-else if Node?
-  proto = Node.prototype
-else
-  console?.log?('EventTarget and Node are missing')
-  return
-
-if proto
-  if !proto.addEventListener?
-    console?.log?('addEventListener is missing')
-    return
-  if !proto.removeEventListener?
-    console?.log?('removeEventListener is missing')
+do ->
+  if EventTarget?
+    proto = EventTarget.prototype
+  else if Node?
+    proto = Node.prototype
+  else
+    console?.log?('EventTarget and Node are missing')
     return
 
-  nestId = 0
-  nests = {}
+  if proto
+    if !proto.addEventListener?
+      console?.log?('addEventListener is missing')
+      return
+    if !proto.removeEventListener?
+      console?.log?('removeEventListener is missing')
+      return
 
-  addEventListener = proto.addEventListener
-  proto.addEventListener = (type, listener, useCapture)->
-    l = listener
+    nestId = 0
+    nests = {}
 
-    nest = (event)->
-      try
-        exports.Egg.apply @, arguments
-      catch e
-        # do a thing
+    addEventListener = proto.addEventListener
+    proto.addEventListener = (type, listener, useCapture)->
+      l = listener
 
-      l.apply @, arguments
+      nest = (event)->
+        try
+          exports.Egg.apply @, arguments
+        catch e
+          # do a thing
 
-    id = l.__nestId
-    if !id?
-      id = nestId++
-      l.__nestId = id
-      nests[id] =
-        nest: nest,
-        count: 0
+        l.apply @, arguments
 
-    nests[id].count++
+      id = l.__nestId
+      if !id?
+        id = nestId++
+        l.__nestId = id
+        nests[id] =
+          nest: nest,
+          count: 0
 
-    addEventListener.call @, type, nest, useCapture
+      nests[id].count++
 
-  removeEventListener = proto.removeEventListener
-  proto.removeEventListener = (type, listener, useCapture)->
-    id = listener.id
-    if !id?
-      nest = listener
-    else
-      nestRecord = nests[id]
-      nest = nestRecord.nest
-      nestRecord.count--
-      if nestRecord.count == 0
-        delete[nests.id]
+      addEventListener.call @, type, nest, useCapture
 
-    removeEventListener type, nest, useCapture
+    removeEventListener = proto.removeEventListener
+    proto.removeEventListener = (type, listener, useCapture)->
+      id = listener.id
+      if !id?
+        nest = listener
+      else
+        nestRecord = nests[id]
+        nest = nestRecord.nest
+        nestRecord.count--
+        if nestRecord.count == 0
+          delete[nests.id]
 
-exports.Target = (events)->
-  document.body.addEventListener(events, exports.Egg)
+      removeEventListener type, nest, useCapture
+
+  exports.Target = (events)->
+    document.body.addEventListener(events, exports.Egg)
+
+  window.cuckoo = exports if window?
 
 module.exports = exports

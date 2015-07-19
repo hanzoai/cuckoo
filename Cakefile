@@ -1,8 +1,9 @@
 exec = require('executive').interactive
+selenium = require 'selenium-standalone'
 
 task 'build', 'Build module and bundled crowdcontrol.js', ->
   exec 'node_modules/.bin/bebop --compile-only'
-  exec 'node_modules/.bin/coffee -bcm -o lib/ src/'
+  # exec 'node_modules/.bin/coffee -bcm -o lib/ src/'
 
 task 'watch', 'watch for changes and recompile', ->
   exec 'node_modules/.bin/bebop'
@@ -10,12 +11,11 @@ task 'watch', 'watch for changes and recompile', ->
 task 'build-min', 'Build minified crowdcontrol.min.js', ->
   exec 'node_modules/.bin/requisite src/index.coffee -m -o crowdcontrol.min.js'
 
-task 'example', 'Launch Examples', ->
-  exec 'coffee examples/index.coffee'
-  exec 'cake watch'
+# task 'example', 'Launch Examples', ->
+#   exec 'coffee examples/index.coffee'
+#   exec 'cake watch'
 
 task 'test', 'Run tests', ->
-  exec 'node_modules/.bin/coffee -bcm -o .test/ test/'
   exec [
     'cake build'
     'NODE_ENV=test
@@ -24,20 +24,15 @@ task 'test', 'Run tests', ->
     --reporter spec
     --colors
     --timeout 60000
-    --require test/_helper.js
-    .test'
+    test/test.coffee'
     ]
 
 task 'install-selenium', 'installs chromedriver for selenium', ->
+  config = require 'selenium-standalone/lib/default-config.js'
+  config.logger = console.log
+
   selenium.install(
-    version: '2.46.0'
-    baseURL: 'http://selenium-release.storage.googleapis.com'
-    drivers:
-      chrome:
-        version: '2.9'
-        arch: process.arch
-        baseURL: 'http://chromedriver.storage.googleapis.com'
-    logger: console.log
+    config
     , (err) -> throw err if err?
   )
 
