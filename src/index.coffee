@@ -19,9 +19,6 @@ do ->
       console?.log?('removeEventListener is missing')
       return
 
-    nestId = 0
-    nests = {}
-
     addEventListener = proto.addEventListener
     proto.addEventListener = (type, listener, useCapture)->
       l = listener
@@ -34,33 +31,15 @@ do ->
 
         l.apply @, arguments
 
-      id = l.__nestId
-      if !id?
-        id = nestId++
-
-        Object.defineProperty l, '__nestId',
-          value: id
-          writable: true
-
-        nests[id] =
-          nest: nest,
-          count: 0
-
-      nests[id].count++
+      Object.defineProperty l, '__nest',
+        value: nest
+        writable: true
 
       addEventListener.call @, type, nest, useCapture
 
     removeEventListener = proto.removeEventListener
     proto.removeEventListener = (type, listener, useCapture)->
-      id = listener.id
-      if !id?
-        nest = listener
-      else
-        nestRecord = nests[id]
-        nest = nestRecord.nest
-        nestRecord.count--
-        if nestRecord.count == 0
-          delete[nests.id]
+      nest = listener.__nest || listener
 
       removeEventListener type, nest, useCapture
 
