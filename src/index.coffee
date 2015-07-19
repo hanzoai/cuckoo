@@ -1,5 +1,5 @@
 exports =
-  Egg: ()->
+  Egg: ->
     console.log('Egg called with ', arguments)
 
 do ->
@@ -15,6 +15,7 @@ do ->
     if !proto.addEventListener?
       console?.log?('addEventListener is missing')
       return
+
     if !proto.removeEventListener?
       console?.log?('removeEventListener is missing')
       return
@@ -23,10 +24,10 @@ do ->
     nests = {}
 
     addEventListener = proto.addEventListener
-    proto.addEventListener = (type, listener, useCapture)->
+    proto.addEventListener = (type, listener, useCapture) ->
       l = listener
 
-      nest = (event)->
+      nest = (event) ->
         try
           exports.Egg.apply @, arguments
         catch e
@@ -47,7 +48,7 @@ do ->
       addEventListener.call @, type, nest, useCapture
 
     removeEventListener = proto.removeEventListener
-    proto.removeEventListener = (type, listener, useCapture)->
+    proto.removeEventListener = (type, listener, useCapture) ->
       id = listener.id
       if !id?
         nest = listener
@@ -60,12 +61,11 @@ do ->
 
       removeEventListener type, nest, useCapture
 
-  exports.Target = (types)->
+  exports.Target = (types) ->
     events = types.split(' ')
     for event in events
-      window.addEventListener(event, ()->
+      window.addEventListener event, ->
         exports.Egg.apply exports.Egg, arguments
-      )
 
   window.cuckoo = exports if window?
 
