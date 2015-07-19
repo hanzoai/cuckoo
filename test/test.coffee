@@ -1,94 +1,20 @@
-selenium = require('selenium-standalone')
 webdriver = require('webdriverio')
 assert = require('assert')
-nodeStatic = require('node-static')
-http = require('http')
 should = require('chai').should()
+async = require 'async'
 
-currentPort = 9000
-port = currentPort + Math.floor(Math.random() * (1000-1+1)+1)
+getBrowser = ->
+  browserName = process.env.BROWSER
 
-sleep = (seconds)->
-  e = new Date().getTime() + (seconds * 1000)
-  while (new Date().getTime() <= e)
-    1
+  opts =
+    desiredCapabilities:
+      browserName: browserName ? 'phantomjs'
+      'phantomjs.binary.path': './node_modules/phantomjs/bin/phantomjs'
 
-server = null
-client = null
-
-before (done)->
-  @timeout 0
-  staticServer = new nodeStatic.Server('./test')
-  server = http.createServer((req, res)->
-    req.addListener('end', ()->
-      staticServer.serve(req, res)
-    ).resume()
-  ).listen(port)
-
-after (done) ->
-  client.end ->
-    if !Boolean(process.env.CI) || !Boolean(process.env.TRAVIS)
-      selenium.proc.kill()
-    server.close()
-    done()
-
-run = (seleniumParams) ->
-  describe 'Cuckoo Tests for ['+ seleniumParams.desiredCapabilities.browserName + ']', () ->
-    before (done)->
-      client = webdriver.remote(seleniumParams).init ()->
-        done()
-
-    describe 'Cuckoo can capture uncaptured events', ->
-      it 'should capture a click on an element without a handler', (done) ->
-        client.url("http://localhost:#{port}/test.html")
-          .click('#somelink')
-          .getText('#result', (err, res) ->
-            res.should.equal 'clicked: somelink'
-          ).call done
-      it 'should capture window events like hashchange', (done) ->
-        client.url("http://localhost:#{port}/test.html")
-          .click('#linktobookmark')
-          .getText('#result', (err, res) ->
-            res.should.equal 'hashchangeed: undefined'
-          ).call done
-      it 'should filter events', (done) ->
-        client.url("http://localhost:#{port}/test.html")
-          .setValue('#changeinput', "somethingelse")
-          .getValue('#changeinput', (err, res)->
-            res.should.equal('somethingelse')
-          )
-          .getText('#rejected', (err, res) ->
-            res.should.equal 'changeed: changeinput'
-          )
-          .getText('#result', (err, res) ->
-            res.should.equal ''
-          ).call done
-
-    describe 'Cuckoo can capture captured events', ->
-      it 'should capture propagated events', (done) ->
-        client.url("http://localhost:#{port}/test.html")
-          .click('#clickablediv')
-          .getText('#result', (err, res) ->
-            res.should.equal 'clicked: clickablediv'
-          ).call done
-
-      it 'should capture unpropagated events', (done) ->
-        client.url("http://localhost:#{port}/test.html")
-          .click('#dontstopmenow')
-          .getText('#result', (err, res) ->
-            res.should.equal 'clicked: dontstopmenow'
-          ).call done
-
-if Boolean(process.env.CI) and Boolean(process.env.TRAVIS)
-  browsers = [
-    'firefox'
-    'chrome'
-    # 'iphone'
-  ]
-  browsers.forEach (browser) ->
-    run
+  if process.env.TRAVIS?
+    opts =
       desiredCapabilities:
-        browserName: browser
+        browserName: browserName
         name: process.env.TRAVIS_COMMIT
         tags: [
           process.env.TRAVIS_PULL_REQUEST
@@ -97,12 +23,56 @@ if Boolean(process.env.CI) and Boolean(process.env.TRAVIS)
         ]
         'tunnel-identifier': process.env.TRAVIS_JOB_NUMBER
       host: 'ondemand.saucelabs.com'
-      port: 80
+      port: process.env.PORT ? 3333
       user: process.env.SAUCE_USERNAME
       key: process.env.SAUCE_ACCESS_KEY
       logLevel: 'silent'
-else
-  run
-    desiredCapabilities:
-      browserName: 'phantomjs'
-      'phantomjs.binary.path': './node_modules/phantomjs/bin/phantomjs'
+
+  webdriver.remote(opts).init()
+
+describe "Cuckoo (#{process.env.BROWSER})", ->
+  client   = getBrowser()
+  testPage = "http://localhost:#{process.env.PORT ? 3333}/test.html"
+
+  describe 'Cuckoo can capture uncaptured events', ->
+    it 'should capture a click on an element without a handler', (done) ->
+      client.url(testPage)
+        .click('#somelink')
+        .getText('#result', (err, res) ->
+          res.should.equal 'clicked: somelink'
+        ).call done
+
+    it 'should capture window events like hashchange', (done) ->
+      client.url(testPage)
+        .click('#linktobookmark')
+        .getText('#result', (err, res) ->
+          res.should.equal 'hashchangeed: undefined'
+        ).call done
+
+    it 'should filter events', (done) ->
+      client.url(testPage)
+        .setValue('#changeinput', "somethingelse")
+        .getValue('#changeinput', (err, res)->
+          res.should.equal('somethingelse')
+        )
+        .getText('#rejected', (err, res) ->
+          res.should.equal 'changeed: changeinput'
+        )
+        .getText('#result', (err, res) ->
+          res.should.equal ''
+        ).call done
+
+  describe 'Cuckoo can capture captured events', ->
+    it 'should capture propagated events', (done) ->
+      client.url(testPage)
+        .click('#clickablediv')
+        .getText('#result', (err, res) ->
+          res.should.equal 'clicked: clickablediv'
+        ).call done
+
+    it 'should capture unpropagated events', (done) ->
+      client.url(testPage)
+        .click('#dontstopmenow')
+        .getText('#result', (err, res) ->
+          res.should.equal 'clicked: dontstopmenow'
+        ).call done

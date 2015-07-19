@@ -1,38 +1,44 @@
-exec = require('executive').interactive
-selenium = require 'selenium-standalone'
+exec = require('shortcake').exec.interactive
 
 task 'build', 'Build module and bundled crowdcontrol.js', ->
   exec 'node_modules/.bin/bebop --compile-only'
-  # exec 'node_modules/.bin/coffee -bcm -o lib/ src/'
+
+task 'build-min', 'Build minified cuckoo.min.js', ->
+  exec 'node_modules/.bin/requisite src/index.coffee -m -o cuckoo.min.js'
 
 task 'watch', 'watch for changes and recompile', ->
   exec 'node_modules/.bin/bebop'
 
-task 'build-min', 'Build minified crowdcontrol.min.js', ->
-  exec 'node_modules/.bin/requisite src/index.coffee -m -o crowdcontrol.min.js'
+task 'static-server', 'Run static server for tests', ->
+  connect = require 'connect'
+  server = connect()
+  server.use (require 'serve-static') './test'
+  server.listen process.env.PORT ? 3333
 
-# task 'example', 'Launch Examples', ->
-#   exec 'coffee examples/index.coffee'
-#   exec 'cake watch'
+task 'selenium-install', 'Install selenium standalone', ->
+  exec 'node_modules/.bin/selenium-standalone install'
 
 task 'test', 'Run tests', ->
-  exec [
-    'cake build'
-    'NODE_ENV=test
-    node_modules/.bin/mocha
-    --compilers coffee:coffee-script/register
-    --reporter spec
-    --colors
-    --timeout 60000
-    test/test.coffee'
-    ]
+  invoke 'static-server'
 
-task 'install-selenium', 'installs chromedriver for selenium', ->
-  config = require 'selenium-standalone/lib/default-config.js'
-  config.logger = console.log
+  selenium = require 'selenium-standalone'
+  selenium.start (err, child) ->
+    exec 'NODE_ENV=test
+          BROWSER=phantomjs
+          node_modules/.bin/mocha
+          --compilers coffee:coffee-script/register
+          --reporter spec
+          --colors
+          --timeout 60000
+          test/test.coffee', child.kill
 
-  selenium.install(
-    config
-    , (err) -> throw err if err?
-  )
+task 'test-ci', 'Run tests on CI server', ->
+  invoke 'static-server'
 
+  exec 'NODE_ENV=test
+        node_modules/.bin/mocha
+        --compilers coffee:coffee-script/register
+        --reporter spec
+        --colors
+        --timeout 60000
+        test/test.coffee'
