@@ -85,8 +85,8 @@ run = (seleniumParams) ->
 if Boolean(process.env.CI) and Boolean(process.env.TRAVIS)
   browsers = [
     'firefox'
-    'chrome'
-    'iphone'
+    # 'chrome'
+    # 'iphone'
   ]
   browsers.forEach (browser) ->
     run
