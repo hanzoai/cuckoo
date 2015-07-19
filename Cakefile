@@ -1,7 +1,7 @@
 exec = require('shortcake').exec
 
 task 'build', 'Build module and bundled crowdcontrol.js', ->
-  exec 'node_modules/.bin/bebop --compile-only'
+  exec 'node_modules/.bin/requisite src/index.coffee -o cuckoo.js'
 
 task 'build-min', 'Build minified cuckoo.min.js', ->
   exec 'node_modules/.bin/requisite src/index.coffee -m -o cuckoo.min.js'
