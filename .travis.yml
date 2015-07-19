@@ -9,9 +9,6 @@ script: >
                               --require postmortem/register \
                               test/test.coffee
 
-cache:
-  directories:
-    - node_modules
 notifications:
   email:
     on_success: change
