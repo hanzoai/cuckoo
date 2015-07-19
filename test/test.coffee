@@ -13,11 +13,10 @@ sleep = (seconds)->
   while (new Date().getTime() <= e)
     1
 
-run = (seleniumParams) ->
-  staticServer = null
-  server = null
-  client = null
+server = null
+client = null
 
+run = (seleniumParams) ->
   before (done)->
     @timeout 0
 
@@ -28,16 +27,21 @@ run = (seleniumParams) ->
       ).resume()
     ).listen(port)
 
-    selenium.start (err, child)->
-      throw err if err
-      selenium.proc = child
+    if Boolean(process.env.CI) and Boolean(process.env.TRAVIS)
       client = webdriver.remote(seleniumParams).init ()->
-        done()
+      done()
+    else
+      selenium.start (err, child)->
+        throw err if err
+        selenium.proc = child
+        client = webdriver.remote(seleniumParams).init ()->
+          done()
 
   after (done) ->
     client.end ->
       server.close()
-      selenium.proc.kill()
+      if !Boolean(process.env.CI) || !Boolean(process.env.TRAVIS)
+        selenium.proc.kill()
       done()
 
   describe 'Cuckoo Tests for ['+ seleniumParams.desiredCapabilities.browserName + ']', () ->

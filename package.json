@@ -38,7 +38,6 @@
     "postmortem": "^0.1.8",
     "requisite": "^1.9.4",
     "selenium-standalone": "^4.4.2",
-    "selenium-webdriver": "^2.46.1",
     "uglify-js": "^2.4.23",
     "webdriverio": "^2.4.5"
   }
