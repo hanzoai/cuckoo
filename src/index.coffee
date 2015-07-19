@@ -31,15 +31,21 @@ do ->
 
         l.apply @, arguments
 
-      Object.defineProperty l, '__nest',
-        value: nest
-        writable: true
+        try
+          Object.defineProperty l, '__nest',
+            value: nest
+            writable: true
+        catch
 
       addEventListener.call @, type, nest, useCapture
 
     removeEventListener = proto.removeEventListener
     proto.removeEventListener = (type, listener, useCapture)->
-      nest = listener.__nest || listener
+      try
+        nest = listener.__nest
+      catch
+
+      nest = listener if !nest?
 
       removeEventListener type, nest, useCapture
 
