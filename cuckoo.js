@@ -49,8 +49,7 @@
   require.define = function (file, fn) {
     require.modules[file] = fn
   };
-  global.require = require;
-  // source: /Users/dtai/work/verus/cuckoo/src/index.coffee
+  // source: /Users/zk/work/verus/cuckoo/src/index.coffee
   require.define('./index', function (module, exports, __dirname, __filename) {
     var exports;
     exports = {
