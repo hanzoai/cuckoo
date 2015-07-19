@@ -27,7 +27,7 @@ do ->
         try
           if !event.__reported
             exports.Egg.apply @, arguments
-            Object.defineProperty l, '__reported',
+            Object.defineProperty event, '__reported',
               value: true
               writable: true
         catch e
