@@ -86,7 +86,7 @@ if Boolean(process.env.CI) and Boolean(process.env.TRAVIS)
   browsers = [
     'firefox'
     'chrome'
-    'iphone'
+    # 'iphone'
   ]
   browsers.forEach (browser) ->
     run
