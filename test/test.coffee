@@ -16,35 +16,28 @@ sleep = (seconds)->
 server = null
 client = null
 
+before (done)->
+  @timeout 0
+  staticServer = new nodeStatic.Server('./test')
+  server = http.createServer((req, res)->
+    req.addListener('end', ()->
+      staticServer.serve(req, res)
+    ).resume()
+  ).listen(port)
+
+after (done) ->
+  client.end ->
+    if !Boolean(process.env.CI) || !Boolean(process.env.TRAVIS)
+      selenium.proc.kill()
+    server.close()
+    done()
+
 run = (seleniumParams) ->
-  before (done)->
-    @timeout 0
-
-    staticServer = new nodeStatic.Server('./test')
-    server = http.createServer((req, res)->
-      req.addListener('end', ()->
-        staticServer.serve(req, res)
-      ).resume()
-    ).listen(port)
-
-    if Boolean(process.env.CI) and Boolean(process.env.TRAVIS)
-      client = webdriver.remote(seleniumParams).init ()->
-      done()
-    else
-      selenium.start (err, child)->
-        throw err if err
-        selenium.proc = child
-        client = webdriver.remote(seleniumParams).init ()->
-          done()
-
-  after (done) ->
-    client.end ->
-      server.close()
-      if !Boolean(process.env.CI) || !Boolean(process.env.TRAVIS)
-        selenium.proc.kill()
-      done()
-
   describe 'Cuckoo Tests for ['+ seleniumParams.desiredCapabilities.browserName + ']', () ->
+    before (done)->
+      client = webdriver.remote(seleniumParams).init ()->
+        done()
+
     describe 'Cuckoo can capture uncaptured events', ->
       it 'should capture a click on an element without a handler', (done) ->
         client.url("http://localhost:#{port}/test.html")
@@ -108,7 +101,6 @@ if Boolean(process.env.CI) and Boolean(process.env.TRAVIS)
       user: process.env.SAUCE_USERNAME
       key: process.env.SAUCE_ACCESS_KEY
       logLevel: 'silent'
-    return
 else
   run
     desiredCapabilities:
