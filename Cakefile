@@ -1,4 +1,4 @@
-exec = require('shortcake').exec.interactive
+exec = require('shortcake').exec
 
 task 'build', 'Build module and bundled crowdcontrol.js', ->
   exec 'node_modules/.bin/bebop --compile-only'
@@ -32,7 +32,10 @@ task 'test', 'Run tests', ->
           --reporter spec
           --colors
           --timeout 60000
-          test/test.coffee', -> child.kill() and process.exit 0
+          test/test.coffee', (err) ->
+      child.kill()
+      process.exit 1 if err?
+      process.exit 0
 
 task 'test-ci', 'Run tests on CI server', ->
   invoke 'static-server'
@@ -47,4 +50,6 @@ task 'test-ci', 'Run tests on CI server', ->
      --timeout 60000
      test/test.coffee"
 
-  exec tests, -> process.exit 0
+  exec tests, (err) ->
+    process.exit 1 if err?
+    process.exit 0
