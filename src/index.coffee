@@ -37,7 +37,11 @@ do ->
       id = l.__nestId
       if !id?
         id = nestId++
-        l.__nestId = id
+
+        Object.defineProperty l, '__nestId',
+          value: id
+          writable: true
+
         nests[id] =
           nest: nest,
           count: 0
