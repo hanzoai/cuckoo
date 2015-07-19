@@ -25,7 +25,11 @@ do ->
 
       nest = (event)->
         try
-          exports.Egg.apply @, arguments
+          if !event.__reported
+            exports.Egg.apply @, arguments
+            Object.defineProperty l, '__reported',
+              value: true
+              writable: true
         catch e
           # do a thing
 
