@@ -36,7 +36,6 @@
     "node-static": "^0.7.6",
     "phantomjs": "^1.9.17",
     "postmortem": "^0.1.8",
-    "q": "^1.4.1",
     "requisite": "^1.9.4",
     "selenium-standalone": "^4.4.2",
     "uglify-js": "^2.4.23",
