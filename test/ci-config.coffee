@@ -1,10 +1,10 @@
 module.exports = [
-  browserName: 'iphone'
-  platform: 'OS X 10.10'
-  version: '8.2'
-  # deviceName: 'iPhone Simulator'
-  deviceOrientation: 'portrait'
-,
+  # browserName: 'iphone'
+  # platform: 'OS X 10.10'
+  # version: '8.2'
+  # # deviceName: 'iPhone Simulator'
+  # deviceOrientation: 'portrait'
+# ,
   # browserName: 'iphone'
   # platform: 'OS X 10.10'
   # version: '7.1'
