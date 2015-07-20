@@ -11,7 +11,7 @@ describe "Cuckoo (#{process.env.BROWSER})", ->
     it 'should capture a click on an element without a handler', (done) ->
       browser
         .url testPage
-        .waitForExist '#somelink'
+        .waitForExist '#somelink', 5000
         .click '#somelink'
         .getText '#result', (err, res) ->
           res.should.equal 'clicked: somelink'
@@ -20,6 +20,7 @@ describe "Cuckoo (#{process.env.BROWSER})", ->
     it 'should capture window events like hashchange', (done) ->
       browser
         .url testPage
+        .waitForExist '#linktobookmark', 5000
         .click '#linktobookmark'
         .getText '#result', (err, res) ->
           res.should.equal 'hashchangeed: undefined'
@@ -39,6 +40,7 @@ describe "Cuckoo (#{process.env.BROWSER})", ->
     it 'should capture propagated events', (done) ->
       browser
         .url testPage
+        .waitForExist '#clickablediv', 5000
         .click '#clickablediv'
         .getText '#result', (err, res) ->
           res.should.equal 'clicked: clickablediv'
@@ -47,6 +49,7 @@ describe "Cuckoo (#{process.env.BROWSER})", ->
     it 'should capture unpropagated events', (done) ->
       browser
         .url testPage
+        .waitForExist '#dontstopmenow', 5000
         .click '#dontstopmenow'
         .getText '#result', (err, res) ->
           res.should.equal 'clicked: dontstopmenow'
