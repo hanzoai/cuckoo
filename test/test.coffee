@@ -31,9 +31,6 @@ describe "Cuckoo (#{process.env.BROWSER})", ->
         .getText('#rejected', (err, res) ->
           res.should.equal 'changeed: changeinput'
         )
-        .getText('#result', (err, res) ->
-          res.should.equal ''
-        ).call done
 
   describe 'Cuckoo can capture captured events', ->
     it 'should capture propagated events', (done) ->
