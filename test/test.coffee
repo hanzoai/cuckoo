@@ -11,6 +11,7 @@ describe "Cuckoo (#{process.env.BROWSER})", ->
     it 'should capture a click on an element without a handler', (done) ->
       browser
         .url testPage
+        .waitForExist '#somelink'
         .click '#somelink'
         .getText '#result', (err, res) ->
           res.should.equal 'clicked: somelink'
