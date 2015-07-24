@@ -7,6 +7,7 @@ exports.getBrowser = ->
     desiredCapabilities:
       browserName: browserName ? 'phantomjs'
       'phantomjs.binary.path': './node_modules/phantomjs/bin/phantomjs'
+      logLevel: 'verbose'
 
   if process.env.TRAVIS?
     opts =

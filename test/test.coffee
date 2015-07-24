@@ -4,6 +4,7 @@ should = require('chai').should()
 {getBrowser} = require './util'
 
 describe "Cuckoo (#{process.env.BROWSER})", ->
+  @timeout 90000
   browser  = getBrowser()
   testPage = "http://localhost:#{process.env.PORT ? 3333}/test.html"
 
