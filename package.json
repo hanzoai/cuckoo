@@ -2,7 +2,7 @@
   "name": "cuckoo-js",
   "version": "1.0.2",
   "description": "Event Reporting Library for Crowdstart",
-  "main": "cuckoo.js",
+  "main": "src/index.coffee",
   "directories": {
     "test": "test"
   },
