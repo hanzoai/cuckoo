@@ -1,32 +1,37 @@
 {
   "name": "cuckoo-js",
   "version": "1.0.2",
-  "description": "Event Reporting Library for Crowdstart",
-  "main": "src/index.coffee",
-  "directories": {
-    "test": "test"
-  },
+  "description": "An event reporting library for [track.js](https://github.com/hanzo-io/track.js).",
+  "main": "lib/cuckoo.cjs.js",
+  "module": "lib/cuckoo.es.js",
+  "jsnext:main": "lib/cuckoo.es.js",
+  "files": [
+    "lib/",
+    "src/"
+  ],
   "scripts": {
     "test": "cake test"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/crowdstart/cuckoo.git"
+    "url": "git+https://github.com/hanzo-io/cuckoo.git"
   },
   "keywords": [
     "event",
     "tracking",
     "analytics"
   ],
-  "author": "Verus Media",
-  "license": "ISC",
+  "author": "Hanzo, Inc <hi@hanzo.io",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/crowdstart/cuckoo/issues"
+    "url": "https://github.com/hanzo-io/cuckoo/issues"
   },
-  "homepage": "https://github.com/crowdstart/cuckoo#readme",
+  "homepage": "https://github.com/hanzo-io/cuckoo#readme",
   "devDependencies": {
     "bebop": "^1.3.6",
     "cake": "^0.1.1",
+    "cake-bundle": "^0.2.16",
+    "cake-outdated": "^0.1.16",
     "chai": "^3.1.0",
     "coffee-script": "^1.9.3",
     "connect": "^3.4.0",
