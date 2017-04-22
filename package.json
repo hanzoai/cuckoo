@@ -1,7 +1,7 @@
 {
   "name": "cuckoo-js",
   "version": "1.0.2",
-  "description": "An event reporting library for [track.js](https://github.com/hanzo-io/track.js).",
+  "description": "An event reporting library for Track.js",
   "main": "lib/cuckoo.cjs.js",
   "module": "lib/cuckoo.es.js",
   "jsnext:main": "lib/cuckoo.es.js",
@@ -10,7 +10,10 @@
     "src/"
   ],
   "scripts": {
-    "test": "cake test"
+    "build": "sake build",
+    "prepublishOnly": "sake build",
+    "pretest": "sake build",
+    "test": "sake test"
   },
   "repository": {
     "type": "git",
@@ -22,7 +25,7 @@
     "analytics"
   ],
   "author": "Hanzo, Inc <hi@hanzo.io",
-  "license": "MIT",
+  "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/hanzo-io/cuckoo/issues"
   },
