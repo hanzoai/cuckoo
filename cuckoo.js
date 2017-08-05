@@ -53,7 +53,7 @@
   rqzt.define('./index', function (module, exports, __dirname, __filename, process) {
     var exports;
     exports = {
-      Egg: function () {
+      onEvent: function () {
         return console.log('Egg called with ', arguments)
       }
     };
@@ -96,7 +96,7 @@
             var e;
             try {
               if (!event.__reported) {
-                exports.Egg.apply(this, arguments);
+                exports.onEvent.apply(this, arguments);
                 Object.defineProperty(event, '__reported', {
                   value: true,
                   writable: true
@@ -129,14 +129,14 @@
           return removeEventListener(type, nest, useCapture)
         }
       }
-      exports.Target = function (types) {
+      exports.target = function (types) {
         var event, events, i, len, results;
         events = types.split(' ');
         results = [];
         for (i = 0, len = events.length; i < len; i++) {
           event = events[i];
           results.push(window.addEventListener(event, function () {
-            return exports.Egg.apply(exports.Egg, arguments)
+            return exports.onEvent.apply(exports.onEvent, arguments)
           }))
         }
         return results
