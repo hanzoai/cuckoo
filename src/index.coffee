@@ -1,5 +1,5 @@
 exports =
-  Egg: ()->
+  onEvent: ()->
     console.log('Egg called with ', arguments)
 
 do ->
@@ -26,7 +26,7 @@ do ->
       nest = (event)->
         try
           if !event.__reported
-            exports.Egg.apply @, arguments
+            exports.onEvent.apply @, arguments
             Object.defineProperty event, '__reported',
               value: true
               writable: true
@@ -53,11 +53,11 @@ do ->
 
       removeEventListener type, nest, useCapture
 
-  exports.Target = (types)->
+  exports.target = (types)->
     events = types.split(' ')
     for event in events
       window.addEventListener(event, ()->
-        exports.Egg.apply exports.Egg, arguments
+        exports.onEvent.apply exports.onEvent, arguments
       )
 
   window.cuckoo = exports if window?
