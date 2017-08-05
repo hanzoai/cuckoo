@@ -1,6 +1,6 @@
 {
   "name": "cuckoo-js",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "An event reporting library for hanzo-analytics",
   "main": "lib/cuckoo.cjs.js",
   "module": "lib/cuckoo.es.js",
