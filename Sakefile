@@ -1,9 +1,7 @@
-require 'shortcake'
-
-use 'cake-version'
-use 'cake-publish'
-use 'cake-bundle'
-use 'cake-outdated'
+use 'sake-version'
+use 'sake-publish'
+use 'sake-bundle'
+use 'sake-outdated'
 
 option '-b', '--browser [browserName]', 'browser to test with'
 
