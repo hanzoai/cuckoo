@@ -2,9 +2,9 @@
   "name": "cuckoo-js",
   "version": "1.0.5",
   "description": "An event reporting library for hanzo-analytics",
-  "main": "lib/cuckoo.cjs.js",
-  "module": "lib/cuckoo.es.js",
-  "jsnext:main": "lib/cuckoo.es.js",
+  "main": "lib/cuckoo.js",
+  "module": "lib/cuckoo.mjs",
+  "jsnext:main": "lib/cuckoo.mjs",
   "files": [
     "lib/",
     "src/"
@@ -20,6 +20,7 @@
     "url": "git+https://github.com/hanzo-io/cuckoo.git"
   },
   "keywords": [
+    "hanzo",
     "event",
     "tracking",
     "analytics"

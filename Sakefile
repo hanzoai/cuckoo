@@ -1,18 +1,32 @@
-use 'sake-version'
-use 'sake-publish'
 use 'sake-bundle'
+use 'sake-linked'
 use 'sake-outdated'
+use 'sake-publish'
+use 'sake-test'
+use 'sake-version'
 
-option '-b', '--browser [browserName]', 'browser to test with'
+task 'clean', 'clean project', ->
+  exec 'rm -rf lib'
 
-task 'build', 'Build module and bundled crowdcontrol.js', ->
-  exec 'node_modules/.bin/requisite src/index.coffee -o cuckoo.js'
+task 'build', 'build project', ->
+  bundle.write
+    entry: 'src/index.coffee'
+    compilers:
+      coffee:
+        version: 1
 
-task 'build:min', 'Build minified cuckoo.min.js', ->
-  exec 'node_modules/.bin/requisite src/index.coffee -m -o cuckoo.min.js'
+task 'build:min', 'build project for production', ['build'], ->
+  exec 'uglifyjs lib/cuckoo.js -o lib/cuckoo.min.js'
 
-task 'watch', 'watch for changes and recompile', ->
-  exec 'node_modules/.bin/bebop'
+task 'coverage', 'Process coverage statistics', ->
+  exec '''
+    cat ./coverage/lcov.info | coveralls
+    cat ./coverage/coverage.json | codecov
+    rm -rf coverage/
+    '''
+
+task 'watch', 'watch for changes and recompile project', ['build'], ->
+  watch 'src/*', -> invoke 'build'
 
 task 'server', 'Run static server for tests', ->
   connect = require 'connect'
