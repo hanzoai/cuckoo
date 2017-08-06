@@ -54,7 +54,7 @@
     var exports;
     exports = {
       onEvent: function () {
-        return console.log('Egg called with ', arguments)
+        return console.log('onEvent called with ', arguments)
       }
     };
     (function () {
