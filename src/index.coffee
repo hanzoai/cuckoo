@@ -1,6 +1,6 @@
 exports =
   onEvent: ()->
-    console.log('Egg called with ', arguments)
+    console.log('onEvent called with ', arguments)
 
 do ->
   if EventTarget?
