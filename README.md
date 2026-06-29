@@ -1,3 +1,5 @@
+<p align="center"><img src=".github/hero.svg" alt="cuckoo" width="880"></p>
+
 # cuckoo
 > An event reporting library for [track.js](https://github.com/hanzo-io/track.js).
 
