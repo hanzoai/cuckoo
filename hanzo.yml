@@ -1,0 +1,11 @@
+# CoffeeScript browser library, published to npm from a tag.
+# Gate: the real bundle build. `npm test` drives selenium against a live browser,
+# which a push cannot stand up; the compile is what turns src/*.coffee into the
+# lib/ that gets published, so a syntax error or a bad require fails here.
+test:
+  - name: build
+    run: |
+      set -euo pipefail
+      npm install --no-audit --no-fund
+      npm run build
+      test -s lib/cuckoo.js
